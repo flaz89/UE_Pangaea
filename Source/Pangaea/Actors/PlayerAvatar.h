@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "PlayerAvatar.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+
 UCLASS(Blueprintable)
 class PANGAEA_API APlayerAvatar : public ACharacter
 {
@@ -14,6 +17,12 @@ class PANGAEA_API APlayerAvatar : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APlayerAvatar();
+	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	UPROPERTY(EditAnywhere, Category="PlayerAvatar Params")
 	int HealthPoints = 500;
@@ -33,6 +42,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Pangaea | PlayerCharacter", meta=(DisplayName="GetHP"))
 	int GetHealthPoints();
 	
+	TObjectPtr<UCameraComponent> GetCameraComponent() const { return _CameraComponent; }
+	TObjectPtr<USpringArmComponent> GetSpringArmComponent() const { return _SpringArmComponent; }	
+
 	UFUNCTION(BlueprintCallable, Category="Pangaea | PlayerCharacter")
 	bool IsKilled();
 	
@@ -54,10 +66,11 @@ protected:
 	void DieProcess();
 	
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess=true))
+	TObjectPtr<USpringArmComponent> _SpringArmComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta=(AllowPrivateAccess=true))
+	TObjectPtr<UCameraComponent> _CameraComponent;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 };
