@@ -2,7 +2,10 @@
 
 #include "PangaeaGameMode.h"
 
+#include "PangaeaPlayerController.h"
+
 APangaeaGameMode::APangaeaGameMode()
 {
 	// stub
+	PlayerControllerClass = APangaeaPlayerController::StaticClass();
 }

@@ -35,7 +35,7 @@ void UPlayerAvatarAnimInstance::OnStateAnimationEnds()
 		}
 		else if (PlayerState == EPlayerState::Die)
 		{
-			//.. die process
+			PlayerAvatar->DieProcess();
 		}
 	}
 }

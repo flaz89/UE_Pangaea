@@ -54,6 +54,7 @@ public:
 	void Attack();
 	bool IsAttaccking();
 	void Hit(int Damage);
+	void DieProcess();
 	
 
 protected:
@@ -63,7 +64,7 @@ protected:
 	int _HealthPoints;
 	float _AttackCountingDown;
 	
-	void DieProcess();
+	
 	
 
 private:

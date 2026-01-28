@@ -48,6 +48,9 @@ protected:
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> SetDestinationTouchAction;
+	
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> AttackAction;
 
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
@@ -65,6 +68,8 @@ public:
 
 	/** Constructor */
 	APangaeaPlayerController();
+	
+	virtual void BeginPlay() override;
 
 protected:
 
@@ -77,6 +82,8 @@ protected:
 	void OnSetDestinationReleased();
 	void OnTouchTriggered();
 	void OnTouchReleased();
+	
+	void OnAttackedPressed();
 
 	/** Helper function to get the move destination */
 	void UpdateCachedDestination();

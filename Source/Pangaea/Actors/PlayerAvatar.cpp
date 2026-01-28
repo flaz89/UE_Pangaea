@@ -52,7 +52,15 @@ bool APlayerAvatar::IsKilled()
 
 bool APlayerAvatar::CanAttack()
 {
-	return (_AttackCountingDown <= 0.f);
+	// retrive player character and set CanAttack() return "true"
+	// if count down ins <= 0 and player state is != Attack (but only if is == to Locomotion state)
+	UPlayerAvatarAnimInstance* PlayerAnimInstance = Cast<UPlayerAvatarAnimInstance>(GetMesh()->GetAnimInstance());
+	return (_AttackCountingDown <= 0.f && PlayerAnimInstance->PlayerState == EPlayerState::Locomotion);
+}
+
+void APlayerAvatar::Attack()
+{
+	_AttackCountingDown = AttackInterval;
 }
 
 // Called when the game starts or when spawned
@@ -60,6 +68,14 @@ void APlayerAvatar::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void APlayerAvatar::DieProcess()
+{
+	// forcing GC to dellocate memory, but can be simply done with Destroy() letting the reflection system do it for us
+	PrimaryActorTick.bCanEverTick = false;
+	Destroy();
+	GEngine->ForceGarbageCollection( true );
 }
 
 // Called every frame
@@ -70,6 +86,9 @@ void APlayerAvatar::Tick(float DeltaTime)
 	// update Speed value from PlayerAnimInstance
 	UPlayerAvatarAnimInstance* AnimInstancePlayerAvatar = Cast<UPlayerAvatarAnimInstance>(GetMesh()->GetAnimInstance());
 	AnimInstancePlayerAvatar->Speed = GetCharacterMovement()->Velocity.Size2D();
+	
+	if (_AttackCountingDown == AttackInterval) AnimInstancePlayerAvatar->PlayerState = EPlayerState::Attack;
+	if (_AttackCountingDown > 0.f) _AttackCountingDown -= DeltaTime;
 }
 
 // Called to bind functionality to input

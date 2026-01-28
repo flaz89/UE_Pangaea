@@ -3,16 +3,14 @@
 #include "PangaeaPlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
-#include "PangaeaCharacter.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
 #include "Navigation/PathFollowingComponent.h"
-#include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 #include "Engine/LocalPlayer.h"
 #include "Pangaea.h"
+#include "Actors/PlayerAvatar.h"
 
 APangaeaPlayerController::APangaeaPlayerController()
 {
@@ -27,6 +25,11 @@ APangaeaPlayerController::APangaeaPlayerController()
 	DefaultMouseCursor = EMouseCursor::Default;
 	CachedDestination = FVector::ZeroVector;
 	FollowTime = 0.f;
+}
+
+void APangaeaPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void APangaeaPlayerController::SetupInputComponent()
@@ -57,6 +60,8 @@ void APangaeaPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &APangaeaPlayerController::OnTouchTriggered);
 			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &APangaeaPlayerController::OnTouchReleased);
 			EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &APangaeaPlayerController::OnTouchReleased);
+			
+			EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &APangaeaPlayerController::OnAttackedPressed);
 		}
 		else
 		{
@@ -68,6 +73,7 @@ void APangaeaPlayerController::SetupInputComponent()
 void APangaeaPlayerController::OnInputStarted()
 {
 	StopMovement();
+	if (GetWorld()) GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Red, TEXT("Clickmouse action"));
 
 	// Update the move destination to wherever the cursor is pointing at
 	UpdateCachedDestination();
@@ -114,6 +120,14 @@ void APangaeaPlayerController::OnTouchReleased()
 {
 	bIsTouch = false;
 	OnSetDestinationReleased();
+}
+
+void APangaeaPlayerController::OnAttackedPressed()
+{
+	APlayerAvatar* PlayerAvatar = Cast<APlayerAvatar>(GetPawn());
+	if (PlayerAvatar == nullptr) return;
+	if (PlayerAvatar->CanAttack()) PlayerAvatar->Attack();
+	
 }
 
 void APangaeaPlayerController::UpdateCachedDestination()
