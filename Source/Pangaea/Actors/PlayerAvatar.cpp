@@ -3,7 +3,9 @@
 
 #include "PlayerAvatar.h"
 
+#include "AnimInstance/PlayerAvatarAnimInstance.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 
@@ -25,6 +27,17 @@ APlayerAvatar::APlayerAvatar()
 	_CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	_CameraComponent->SetupAttachment(_SpringArmComponent, USpringArmComponent::SocketName);
 	_CameraComponent->bUsePawnControlRotation = false;
+	
+	// avoiding character rotate with player controller
+	bUseControllerRotationRoll = false;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	
+	UCharacterMovementComponent* CharacterMovemenetComponent = GetCharacterMovement();
+	CharacterMovemenetComponent->bOrientRotationToMovement = true;
+	CharacterMovemenetComponent->RotationRate = FRotator(0.0f, 640.0f, 0.0f);
+	CharacterMovemenetComponent->bConstrainToPlane = true;
+	CharacterMovemenetComponent->bSnapToPlaneAtStart = true;
 }
 
 int APlayerAvatar::GetHealthPoints()
@@ -53,6 +66,10 @@ void APlayerAvatar::BeginPlay()
 void APlayerAvatar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	// update Speed value from PlayerAnimInstance
+	UPlayerAvatarAnimInstance* AnimInstancePlayerAvatar = Cast<UPlayerAvatarAnimInstance>(GetMesh()->GetAnimInstance());
+	AnimInstancePlayerAvatar->Speed = GetCharacterMovement()->Velocity.Size2D();
 }
 
 // Called to bind functionality to input
