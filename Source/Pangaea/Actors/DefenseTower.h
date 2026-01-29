@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "DefenseTower.generated.h"
 
+class APlayerAvatar;
 class USphereComponent;
 
 UCLASS(Blueprintable)
@@ -31,8 +32,13 @@ public:
 	float AttackInterval = 1.f;
 	
 		
-	FORCEINLINE USphereComponent* GetBoxComponent() const { return _SphereComponent; };
+	FORCEINLINE USphereComponent* GetSphereComponent() const { return _SphereComponent; };
 	FORCEINLINE UStaticMeshComponent* GetMeshComponent() const { return _MeshComponent; };
+	
+	UFUNCTION()
+	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
 	UFUNCTION(BlueprintPure, Category="Pangaea | Defense Tower", meta=(DisplayName="GetHP"))
 	int GetHealthPoints();
@@ -53,7 +59,6 @@ protected:
 	
 	int _HealthPoints;
 	float _ReloadCountindDown;
-	
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Tower Component", meta=(AllowPrivateAccess=true))
@@ -62,4 +67,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Tower Component", meta=(AllowPrivateAccess=true))
 	TObjectPtr<UStaticMeshComponent> _MeshComponent;
 
+	APlayerAvatar* _Target = nullptr;
+	UClass* _Fireball;
 };

@@ -4,6 +4,7 @@
 #include "Enemy.h"
 
 #include "EnemyController.h"
+#include "Weapon.h"
 #include "AnimInstance/EnemyAnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/PawnSensingComponent.h"
@@ -16,6 +17,8 @@ AEnemy::AEnemy()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	_PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensor"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> BlueprintClass(TEXT("/Game/Pangaea/Blueprints/Weapons/BP_Hammer.BP_Hammer"));
+	_WeaponClass = BlueprintClass.Object->GeneratedClass;
 }
 
 // Called when the game starts or when spawned
@@ -24,6 +27,10 @@ void AEnemy::BeginPlay()
 	Super::BeginPlay();
 	
 	_HealthPoints = HealthPoints;
+	
+	_Weapon = Cast<AWeapon>(GetWorld()->SpawnActor(_WeaponClass));
+	_Weapon->Holder = this;
+	_Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("hand_rSocket"));
 }
 
 // Called every frame

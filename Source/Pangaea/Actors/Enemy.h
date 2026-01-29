@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Enemy.generated.h"
 
+class AWeapon;
 class UPawnSensingComponent;
 
 UCLASS()
@@ -57,6 +58,8 @@ protected:
 	int _HealthPoints;
 	float _AttackCountingDown;
 	AActor* _ChasedTarget = nullptr;
+	UClass* _WeaponClass;
+	AWeapon* _Weapon;
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess=true))
