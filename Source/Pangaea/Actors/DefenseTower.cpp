@@ -2,8 +2,7 @@
 
 
 #include "DefenseTower.h"
-
-#include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 
 
 // Sets default values
@@ -12,11 +11,11 @@ ADefenseTower::ADefenseTower()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	_BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collision"));
-	RootComponent = _BoxComponent;
+	_SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Box Collision"));
+	RootComponent = _SphereComponent;
 	
 	_MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
-	_MeshComponent->SetupAttachment(_BoxComponent);
+	_MeshComponent->SetupAttachment(_SphereComponent);
 }
 
 int ADefenseTower::GetHealthPoints()

@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "DefenseTower.generated.h"
 
-class UBoxComponent;
+class USphereComponent;
 
 UCLASS(Blueprintable)
 class PANGAEA_API ADefenseTower : public AActor
@@ -31,7 +31,7 @@ public:
 	float AttackInterval = 1.f;
 	
 		
-	FORCEINLINE UBoxComponent* GetBoxComponent() const { return _BoxComponent; };
+	FORCEINLINE USphereComponent* GetBoxComponent() const { return _SphereComponent; };
 	FORCEINLINE UStaticMeshComponent* GetMeshComponent() const { return _MeshComponent; };
 	
 	UFUNCTION(BlueprintPure, Category="Pangaea | Defense Tower", meta=(DisplayName="GetHP"))
@@ -57,7 +57,7 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Tower Component", meta=(AllowPrivateAccess=true))
-	TObjectPtr<UBoxComponent> _BoxComponent;
+	TObjectPtr<USphereComponent> _SphereComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Tower Component", meta=(AllowPrivateAccess=true))
 	TObjectPtr<UStaticMeshComponent> _MeshComponent;
