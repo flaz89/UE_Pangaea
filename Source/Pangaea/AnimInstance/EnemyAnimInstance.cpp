@@ -16,7 +16,7 @@ void UEnemyAnimInstance::OnStateAnimationEnds()
 		AEnemy* Enemy = Cast<AEnemy>(GetOwningActor());
 		if (State == EEnemyState::Hit)
 		{
-			if (Enemy->GetHealtPoint() > 0.f)
+			if (Enemy->GetHealthPoints() > 0.f)
 			{
 				State = EEnemyState::Locomotion;
 			}

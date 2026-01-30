@@ -7,6 +7,7 @@
 #include "PlayerAvatar.h"
 #include "Projectile.h"
 #include "Weapon.h"
+#include "AnimInstance/PangaeaAnimInstance.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -49,7 +50,8 @@ void ADefenseTower::OnMeshBeginOverlap(AActor* OtherActor)
 	if (Weapon == nullptr || Weapon->Holder == nullptr) return;
 	
 	APlayerAvatar* WeaponOwner = Cast<APlayerAvatar>(Weapon->Holder);
-	if (WeaponOwner->IsAttaccking() && CanBeDamaged())
+	UPangaeaAnimInstance* AnimInstance = Cast<UPangaeaAnimInstance>(WeaponOwner->GetMesh()->GetAnimInstance());
+	if (AnimInstance->State == ECharacterState::Attack  && CanBeDamaged())
 	{
 		Hit(WeaponOwner->Strength);
 	}

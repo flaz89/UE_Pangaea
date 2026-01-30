@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PangaeaBaseCharacter.h"
 #include "GameFramework/Character.h"
 #include "Enemy.generated.h"
 
@@ -10,7 +11,7 @@ class AWeapon;
 class UPawnSensingComponent;
 
 UCLASS()
-class PANGAEA_API AEnemy : public ACharacter
+class PANGAEA_API AEnemy : public APangaeaBaseCharacter
 {
 	GENERATED_BODY()
 
@@ -19,45 +20,17 @@ public:
 	AEnemy();
 	virtual void Tick(float DeltaTime) override;
 	
-	UPROPERTY(EditAnywhere, Category="Enemy Params")
-	int HealthPoints = 100;
-	
-	UPROPERTY(EditAnywhere, Category="Enemy Params")
-	float Strength = 5.f;
-	
-	UPROPERTY(EditAnywhere, Category="Enemy Params")
-	float Armor = 1.f;
-	
-	UPROPERTY(EditAnywhere, Category="Enemy Params")
-	float AttackRange = 200.f;
-	
-	UPROPERTY(EditAnywhere, Category="Enemy Params")
-	float AttackInterval = 3.f;
-	
-	UFUNCTION(BlueprintCallable, Category="Pangaea|Enemy", meta=(DisplayName="Get HP"))
-	int GetHealtPoint();
+	virtual void Attack() override;
+	virtual void DieProcess() override;
 	
 	UFUNCTION(BlueprintCallable, Category="Pangaea|Enemy")
-	bool IsKilled();
-	
-	UFUNCTION(BlueprintCallable, Category="Pangaea|Enemy")
-	bool CanAttack();
-	
-	UFUNCTION(BlueprintCallable, Category="Pangaea|Enemy")
-	void Chase(AActor* TargetPawn);
-	
-	void Attack();
-	void Hit(int Damage);
-	void DieProcess();
-	bool IsAttacking();
+	void Chase(APawn* TargetPawn);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	int _HealthPoints;
-	float _AttackCountingDown;
-	AActor* _ChasedTarget = nullptr;
+	APawn* _ChasedTarget = nullptr;
 	UClass* _WeaponClass;
 	AWeapon* _Weapon;
 	
