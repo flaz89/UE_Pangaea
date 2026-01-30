@@ -63,11 +63,20 @@ void APlayerAvatar::Attack()
 	_AttackCountingDown = AttackInterval;
 }
 
+bool APlayerAvatar::IsAttaccking()
+{
+	return false;
+}
+
 // Called when the game starts or when spawned
 void APlayerAvatar::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void APlayerAvatar::Hit(int Damage)
+{
 }
 
 void APlayerAvatar::DieProcess()

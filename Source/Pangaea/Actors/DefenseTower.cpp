@@ -3,8 +3,10 @@
 
 #include "DefenseTower.h"
 
+#include "PangaeaCharacter.h"
 #include "PlayerAvatar.h"
 #include "Projectile.h"
+#include "Weapon.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -17,6 +19,8 @@ ADefenseTower::ADefenseTower()
 	
 	_SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Box Collision"));
 	RootComponent = _SphereComponent;
+	_SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ADefenseTower::OnSphereBeginOverlap);
+	_SphereComponent->OnComponentEndOverlap.AddDynamic(this, &ADefenseTower::OnSphereEndOverlap);
 	
 	_MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
 	_MeshComponent->SetupAttachment(_SphereComponent);
@@ -39,6 +43,23 @@ void ADefenseTower::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent,
 	if (_Target != nullptr && OtherActor == _Target) _Target = nullptr;
 }
 
+void ADefenseTower::OnMeshBeginOverlap(AActor* OtherActor)
+{
+	AWeapon* Weapon = Cast<AWeapon>(OtherActor);
+	if (Weapon == nullptr || Weapon->Holder == nullptr) return;
+	
+	APlayerAvatar* WeaponOwner = Cast<APlayerAvatar>(Weapon->Holder);
+	if (WeaponOwner->IsAttaccking() && CanBeDamaged())
+	{
+		Hit(WeaponOwner->Strength);
+	}
+
+}
+
+void ADefenseTower::Hit(int Damage)
+{
+}
+
 int ADefenseTower::GetHealthPoints()
 {
 	return _HealthPoints;
@@ -57,24 +78,20 @@ bool ADefenseTower::CanFire()
 void ADefenseTower::Fire()
 {
 	if (_Target == nullptr) return;
-	
-
-	AProjectile* Fireball = Cast<AProjectile>(GetWorld()->SpawnActor(_Fireball));
 	FVector FireballStartLocation = GetActorLocation();
 	FireballStartLocation.Z += 100.f;
 	FVector FireballEndLocation =_Target->GetActorLocation();
 	FireballEndLocation.Z = FireballStartLocation.Z;
 	FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(FireballStartLocation, FireballEndLocation);
-	Fireball->SetActorLocation(FireballStartLocation);
-	Fireball->SetActorRotation(Rotation);
+	
+	FActorSpawnParameters SpawnParams;
+	AProjectile* Fireball = GetWorld()->SpawnActor<AProjectile>(_Fireball, FireballStartLocation, Rotation, SpawnParams);
 }
 
 // Called when the game starts or when spawned
 void ADefenseTower::BeginPlay()
 {
 	Super::BeginPlay();
-	GetSphereComponent()->OnComponentBeginOverlap.AddDynamic(this, &ADefenseTower::OnSphereBeginOverlap);
-	GetSphereComponent()->OnComponentEndOverlap.AddDynamic(this, &ADefenseTower::OnSphereEndOverlap);
 	
 	SetActorTickInterval(0.5f);
 }

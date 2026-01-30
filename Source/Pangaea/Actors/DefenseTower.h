@@ -39,6 +39,8 @@ public:
 	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	UFUNCTION(BlueprintCallable)
+	void OnMeshBeginOverlap(AActor* OtherActor);
 	
 	UFUNCTION(BlueprintPure, Category="Pangaea | Defense Tower", meta=(DisplayName="GetHP"))
 	int GetHealthPoints();
