@@ -82,6 +82,9 @@ bool ADefenseTower::CanFire()
 
 void ADefenseTower::Fire()
 {
+	/*if (!HasAuthority()) return;
+	if (_PangaeaGameMode == nullptr) return;*/
+	
 	AProjectile* Fireball = _PangaeaGameMode->SpawnOrGetFireball(_Fireball);
 	
 	FVector StartLocation = GetActorLocation();
@@ -104,7 +107,9 @@ void ADefenseTower::BeginPlay()
 	Super::BeginPlay();
 	
 	SetActorTickInterval(0.5f);
+	/*if (!HasAuthority())*/ 
 	_PangaeaGameMode = Cast<APangaeaGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	
 }
 
 // Called every frame

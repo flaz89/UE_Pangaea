@@ -31,10 +31,15 @@ public:
 	void DropWeapon();
 	
 	virtual void Attack() override;
+	
+	UFUNCTION(Server, Reliable)
+	void Attack_RPC();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+
 	
 
 private:

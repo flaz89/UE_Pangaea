@@ -13,6 +13,6 @@ void AEnemyController::MakeAttackDecision(AActor* TargetPawn)
 	
 	double Dist = FVector::Dist2D(TargetPawn->GetActorLocation(), GetPawn()->GetActorLocation());
 	if (Dist <= EnemyCharacter->AttackRange && EnemyCharacter->CanAttack()) 
-		EnemyCharacter->Attack();
+		EnemyCharacter->Attack_Broadcast_RPC();
 }
 

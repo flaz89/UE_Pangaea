@@ -46,6 +46,11 @@ void APlayerAvatar::BeginPlay()
 	Super::BeginPlay();
 }
 
+void APlayerAvatar::Attack_RPC_Implementation()
+{
+	Attack_Broadcast_RPC();
+}
+
 void APlayerAvatar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);

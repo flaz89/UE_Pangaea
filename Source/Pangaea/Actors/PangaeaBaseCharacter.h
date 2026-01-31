@@ -43,16 +43,36 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Pangaea | PlayerCharacter")
 	bool CanAttack();
 	
+	UFUNCTION(NetMulticast, Reliable)
+	void Attack_Broadcast_RPC();
+	
 	virtual void Attack();
 	virtual void Hit(int Damage);
 	virtual void DieProcess();
+	
+	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	// repnotify
+	UFUNCTION()
+	void OnHealthPointsChanged();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UUserWidget* HealthBarWidget;
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
+	// Multicast = called on server and executed on clients and server
+	// networking function allowing attack on all clients
+
+	
 	UPangaeaAnimInstance* _AnimInstance;
+	
+	UPROPERTY(ReplicatedUsing=OnHealthPointsChanged)
 	int _HealthPoints;
+	
 	float _AttackCountingDown;
 
 };
+

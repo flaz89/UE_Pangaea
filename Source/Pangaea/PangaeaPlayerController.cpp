@@ -125,9 +125,11 @@ void APangaeaPlayerController::OnTouchReleased()
 void APangaeaPlayerController::OnAttackedPressed()
 {
 	APlayerAvatar* PlayerAvatar = Cast<APlayerAvatar>(GetPawn());
-	if (PlayerAvatar == nullptr) return;
-	if (PlayerAvatar->CanAttack()) PlayerAvatar->Attack();
-	
+	if (PlayerAvatar != nullptr && PlayerAvatar->CanAttack())
+	{
+		StopMovement();
+		PlayerAvatar->Attack_RPC();
+	}
 }
 
 void APangaeaPlayerController::UpdateCachedDestination()

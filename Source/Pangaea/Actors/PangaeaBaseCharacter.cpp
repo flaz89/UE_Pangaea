@@ -2,8 +2,10 @@
 
 
 #include "PangaeaBaseCharacter.h"
-
 #include "AnimInstance/PangaeaAnimInstance.h"
+#include "Components/ProgressBar.h"
+#include "Net/UnrealNetwork.h"
+#include "UI/HealthBarWidget.h"
 
 
 // Sets default values
@@ -11,6 +13,7 @@ APangaeaBaseCharacter::APangaeaBaseCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -20,6 +23,12 @@ void APangaeaBaseCharacter::BeginPlay()
 	
 	_AnimInstance = Cast<UPangaeaAnimInstance>(GetMesh()->GetAnimInstance());
 	_HealthPoints = HealthPoints;
+}
+
+// implementation function on Server for attack() function
+void APangaeaBaseCharacter::Attack_Broadcast_RPC_Implementation()
+{
+	Attack();
 }
 
 // Called every frame
@@ -68,4 +77,25 @@ void APangaeaBaseCharacter::DieProcess()
 	Destroy();
 	GEngine->ForceGarbageCollection();
 }
+
+void APangaeaBaseCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(APangaeaBaseCharacter, _HealthPoints);
+}
+
+void APangaeaBaseCharacter::OnHealthPointsChanged()
+{
+	if (HealthBarWidget != nullptr)
+	{
+		float NormalizedHealth = FMath::Clamp(static_cast<float>(_HealthPoints) / HealthPoints, 0.f, 1.f);
+		UHealthBarWidget* HealthBar = Cast<UHealthBarWidget>(HealthBarWidget);
+		HealthBar->HealthProgressBar->SetPercent(NormalizedHealth);
+	}
+	
+	if (_AnimInstance != nullptr) _AnimInstance->State = ECharacterState::Hit;
+	if (IsKilled()) PrimaryActorTick.bCanEverTick = false;
+}
+
 
