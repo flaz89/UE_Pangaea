@@ -4,11 +4,13 @@
 #include "DefenseTower.h"
 
 #include "PangaeaCharacter.h"
+#include "PangaeaGameMode.h"
 #include "PlayerAvatar.h"
 #include "Projectile.h"
 #include "Weapon.h"
 #include "AnimInstance/PangaeaAnimInstance.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -50,12 +52,13 @@ void ADefenseTower::OnMeshBeginOverlap(AActor* OtherActor)
 	if (Weapon == nullptr || Weapon->Holder == nullptr) return;
 	
 	APlayerAvatar* WeaponOwner = Cast<APlayerAvatar>(Weapon->Holder);
+	if (WeaponOwner == nullptr) return;
+	
 	UPangaeaAnimInstance* AnimInstance = Cast<UPangaeaAnimInstance>(WeaponOwner->GetMesh()->GetAnimInstance());
 	if (AnimInstance->State == ECharacterState::Attack  && CanBeDamaged())
 	{
 		Hit(WeaponOwner->Strength);
 	}
-
 }
 
 void ADefenseTower::Hit(int Damage)
@@ -79,16 +82,21 @@ bool ADefenseTower::CanFire()
 
 void ADefenseTower::Fire()
 {
-	if (_Target == nullptr) return;
-	FVector FireballStartLocation = GetActorLocation();
-	FireballStartLocation.Z += 100.f;
-	FVector FireballEndLocation =_Target->GetActorLocation();
-	FireballEndLocation.Z = FireballStartLocation.Z;
-	FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(FireballStartLocation, FireballEndLocation);
+	AProjectile* Fireball = _PangaeaGameMode->SpawnOrGetFireball(_Fireball);
 	
-	FActorSpawnParameters SpawnParams;
-	AProjectile* Fireball = GetWorld()->SpawnActor<AProjectile>(_Fireball, FireballStartLocation, Rotation, SpawnParams);
-}
+	FVector StartLocation = GetActorLocation();
+	StartLocation.Z += 100.0f;
+	FVector TargetLocation = _Target->GetActorLocation();
+	TargetLocation.Z = StartLocation.Z;
+	FRotator Rotation = UKismetMathLibrary::FindLookAtRotation(StartLocation, TargetLocation);
+	
+	Fireball->SetActorLocation(StartLocation);
+	Fireball->SetActorRotation(Rotation);
+	
+	/*FActorSpawnParameters SpawnParams;
+	AProjectile* Fireball = GetWorld()->SpawnActor<AProjectile>(_Fireball, StartLocation, Rotation, SpawnParams);*/
+	
+}	
 
 // Called when the game starts or when spawned
 void ADefenseTower::BeginPlay()
@@ -96,6 +104,7 @@ void ADefenseTower::BeginPlay()
 	Super::BeginPlay();
 	
 	SetActorTickInterval(0.5f);
+	_PangaeaGameMode = Cast<APangaeaGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 }
 
 // Called every frame

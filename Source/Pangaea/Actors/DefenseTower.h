@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "DefenseTower.generated.h"
 
+class APangaeaGameMode;
 class APlayerAvatar;
 class USphereComponent;
 
@@ -61,6 +62,7 @@ protected:
 	
 	int _HealthPoints;
 	float _ReloadCountindDown;
+	APangaeaGameMode* _PangaeaGameMode;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Tower Component", meta=(AllowPrivateAccess=true))

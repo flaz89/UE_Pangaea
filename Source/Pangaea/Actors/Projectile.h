@@ -6,6 +6,8 @@
 #include "TwinStickProjectile.h"
 #include "Projectile.generated.h"
 
+class APangaeaGameMode;
+
 UCLASS(Blueprintable)
 class PANGAEA_API AProjectile : public ATwinStickProjectile
 {
@@ -14,9 +16,10 @@ class PANGAEA_API AProjectile : public ATwinStickProjectile
 public:
 	// Sets default values for this actor's properties
 	AProjectile();
+	virtual void Tick(float DeltaTime) override;
 	
 	UPROPERTY(EditAnywhere, Category="Projectile Params")
-	float Speed = 100.f;
+	float Speed = 800.f;
 	
 	UPROPERTY(EditAnywhere, Category="Projectile Params")
 	float Lifespan = 5.f;
@@ -24,13 +27,15 @@ public:
 	UPROPERTY(EditAnywhere, Category="Projectile Params")
 	float Damage = 10.f;
 
+	void Reset();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 	float _LifeCountingDown;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	
+	APangaeaGameMode* _PangaeaGameMode;
+	
+	
 };
